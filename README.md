@@ -60,19 +60,6 @@ Known errors
 `test_cnn_gradients_are_numerically_correct` fails on Octave because of a bug in Octave's convn implementation. See http://savannah.gnu.org/bugs/?39314
 
 `test_example_CNN` fails in Octave for the same reason.
-
-`test_example_SAE` fails in Octave for unknown reasons.
-
-Contributing
-------------------------------
-1. Fork repository
-2. Create a new branch, e.g. `checkout -b my-stuff`
-3. Commit and push your changes to that branch
-4. Make sure that the test works (!) (see known errors)
-5. Create a pull request
-6. I accept your pull request
-
-I'll not accept pull requests introducing multiple independent changes at once, or pull requests that introduce new capabilities without accompanying tests.
 Example: Deep Belief Network
 ---------------------
 ```matlab
@@ -158,39 +145,6 @@ opts.batchsize = 100;
 nn = nntrain(nn, train_x, train_y, opts);
 [er, bad] = nntest(nn, test_x, test_y);
 assert(er < 0.16, 'Too big error');
-
-%% ex2 train a 100-100 hidden unit SDAE and use it to initialize a FFNN
-%  Setup and train a stacked denoising autoencoder (SDAE)
-rand('state',0)
-sae = saesetup([784 100 100]);
-sae.ae{1}.activation_function       = 'sigm';
-sae.ae{1}.learningRate              = 1;
-sae.ae{1}.inputZeroMaskedFraction   = 0.5;
-
-sae.ae{2}.activation_function       = 'sigm';
-sae.ae{2}.learningRate              = 1;
-sae.ae{2}.inputZeroMaskedFraction   = 0.5;
-
-opts.numepochs =   1;
-opts.batchsize = 100;
-sae = saetrain(sae, train_x, opts);
-visualize(sae.ae{1}.W{1}(:,2:end)')
-
-% Use the SDAE to initialize a FFNN
-nn = nnsetup([784 100 100 10]);
-nn.activation_function              = 'sigm';
-nn.learningRate                     = 1;
-
-%add pretrained weights
-nn.W{1} = sae.ae{1}.W{1};
-nn.W{2} = sae.ae{2}.W{1};
-
-% Train the FFNN
-opts.numepochs =   1;
-opts.batchsize = 100;
-nn = nntrain(nn, train_x, train_y, opts);
-[er, bad] = nntest(nn, test_x, test_y);
-assert(er < 0.1, 'Too big error');
 
 ```
 
@@ -337,4 +291,8 @@ assert(er < 0.1, 'Too big error');
 
 ```
 
+
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/rasmusbergpalm/deeplearntoolbox/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
